@@ -21,7 +21,7 @@
 
 # compilation
 import os, sys
-from kivy.resources import resource_add_path, resource_find # conseillé pour éviter le plantage à la compilation
+from kivy.resources import resource_add_path, resource_find
 
 # Kivy
 from kivy.app import App
@@ -49,7 +49,6 @@ sys.setrecursionlimit(10000)
 class Ogfight(App):
     
     def build(self):
-        super(Ogfight, self).__init__()
         self.root = Fond(cols = 3, spacing = [20, 0], padding = [20, 20])
 
         # Saisie Attaquants - rubriques.Attaquants
