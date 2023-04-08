@@ -248,7 +248,7 @@ class Espio_Input(GridLayout):
                          "Traitement au sulfure" : 0,
                          "Système de pompage à haute énergie" : 0,
                          "Pompes au magma" : 0,
-                         "Extracteurs à haute performance	" : 0,
+                         "Extracteurs à haute performance" : 0,
                          "Extraction" : 0,
                          "Chaîne de production automatisée" : 0,
                          "Technologies d'extraction améliorés" : 0,
