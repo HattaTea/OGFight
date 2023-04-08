@@ -192,7 +192,7 @@ class Espio_Input(GridLayout):
                         "Centre de recherche en robotique" : 0,
                         "Réseau d’actualisation" : 0,
                         "Centre d’assemblage automatisé" : 0,
-                        "Centre d’assemblage automatisé" : 0,
+                        "Centre d’informatique quantique" : 0,
                         "Transformateur hyperpuissant" : 0,
                         "Chaîne de production de micropuces" : 0,
                         "Atelier de montage" : 0,
