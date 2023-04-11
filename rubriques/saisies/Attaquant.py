@@ -132,7 +132,7 @@ class Attaquant(GridLayout):
             try:
                 self.fcoord.galaxie.text = res[0]["coord"].split(":")[0]
                 self.fcoord.ss.text = res[0]["coord"].split(":")[1]
-                self.fcoord.position = res[0]["coord"].split(":")[2]
+                self.fcoord.position.text = res[0]["coord"].split(":")[2]
             except:
                 pass
 
