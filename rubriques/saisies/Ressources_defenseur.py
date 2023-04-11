@@ -38,7 +38,7 @@ class Ressources_defenseur(GridLayout):
         self.size_hint = (1, None)
         self.height = 65
 
-        ress = ["Métal", "Cristal", "Dutérium"]
+        ress = ["Métal", "Cristal", "Deutérium"]
         for r in ress:
             lab = Label(text = r, size_hint = (1, None), height = 30)
             self.add_widget(lab)
