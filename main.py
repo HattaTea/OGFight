@@ -327,7 +327,7 @@ class Ogfight(App):
         # cdr initial
         met_cdr = int(cdrfm//len(bilan)*int(self.param.prc_cdr)/100 + cdrdm//len(bilan)*int(self.param.prc_defcdr)/100)
         cri_cdr = int(cdrfc//len(bilan)*int(self.param.prc_cdr)/100 + cdrdc//len(bilan)*int(self.param.prc_defcdr)/100)
-        deut_cdr = int(cdrfd//len(bilan)*int(self.param.prc_cdr)/100 + cdrdd//len(bilan)*int(self.param.prc_defcdr)/100)
+        deut_cdr = int(cdrfd//len(bilan)*int(self.param.prc_cdr)/100 + cdrdd//len(bilan)*int(self.param.prc_defcdr)/100) if self.param.deut_cdr else 0
         total_cdr = met_cdr + cri_cdr + deut_cdr
 
         # faucheurs attaquants
