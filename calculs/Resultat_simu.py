@@ -191,6 +191,8 @@ class Resultat(FGridLayout):
         self.bcdr.add_widget(self.emcdr)
         self.bcdr.add_widget(self.lccdr)               
         self.bcdr.add_widget(self.eccdr)
+        self.bcdr.add_widget(self.ldcdr)               
+        self.bcdr.add_widget(self.edcdr)           
         self.bcdr.add_widget(self.ltcdr)  
         self.bcdr.add_widget(self.etcdr)
         self.bcdr.add_widget(self.llune)
