@@ -23,8 +23,9 @@ from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.uix.scrollview import ScrollView
+from kivy.uix.checkbox import CheckBox
 
-from kivy.properties import StringProperty
+from kivy.properties import StringProperty, BooleanProperty
 
 from widgets import MyDropDown, Label_Button, FGridLayout
 
@@ -41,6 +42,7 @@ class Param_simu(FGridLayout):
     prc_defcdr = StringProperty("0")
     nb_gal = StringProperty("5")
     nb_ss = StringProperty("499")
+    deut_cdr = BooleanProperty(False)
     
     def __init__(self, **kwargs):
         super(Param_simu, self).__init__(**kwargs)
@@ -158,6 +160,14 @@ class Param_simu(FGridLayout):
         self.fnss.add_widget(self.enss)
         self.fvuni.add_widget(self.fnss)
 
+        self.fdcdr = GridLayout(cols = 2, size_hint = (1, None), height = 30)
+        self.ldcdr = Label(text = "Deutérium dans le cdr :")
+        self.edcdr = CheckBox(active = False, size_hint = (None, 1), width = 40)
+        self.edcdr.bind(active = self.setter("deut_cdr"))
+        self.fdcdr.add_widget(self.ldcdr)
+        self.fdcdr.add_widget(self.edcdr)
+        self.fvuni.add_widget(self.fdcdr)
+        
         self.funi.add_widget(self.fvuni)
         self.sfparam.add_widget(self.funi)
 
