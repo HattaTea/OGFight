@@ -211,7 +211,6 @@ class Attaquant(GridLayout):
 
         self.finput.importer = importer_re
         self.finput.espio.get = self.finput.importer
-        self.finput.espio.reset = reset
 
     def maj_tvc(self, *arg):
         pass
