@@ -118,7 +118,7 @@ class Attaquant(GridLayout):
         # import re
         def importer_re(res):    
             self.fclasses.boxally.set(res[0]["Classe dalliance"])
-            self.fclasses.boxclass.set(res[0]["Classe"]) 
+            self.fclasses.boxclass.set(res[0]["Classe"] if res[0]["Classe"] != "Le collecteur" else "Collecteur") 
 
             self.ftechs.earme.text = str(res[5]["Technologie Armes"])
             self.ftechs.ebou.text = str(res[5]["Technologie Bouclier"])
