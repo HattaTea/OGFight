@@ -378,7 +378,7 @@ class Ogfight(App):
         # benef
         bamet = - int(cbilan.eapm.text.replace(",", "")) + int(cbilan.emcdr.text.replace(",", "")) + int(prmet.replace(",", "")) + int(rffa[0])
         bacri = - int(cbilan.eapc.text.replace(",", "")) + int(cbilan.eccdr.text.replace(",", "")) + int(prcri.replace(",", "")) + int(rffa[1])
-        badeut = - int(cbilan.eapd.text.replace(",", "")) + int(prdeut.replace(",", "")) + int(cbilan.eccdr.text.replace(",", "")) + int(rffa[2])#conso ? : - sum([int(a.econso.text.replace(",", "")) for a in self.attaquants.values])
+        badeut = - int(cbilan.eapd.text.replace(",", "")) + int(prdeut.replace(",", "")) + int(cbilan.edcdr.text.replace(",", "")) + int(rffa[2])#conso ? : - sum([int(a.econso.text.replace(",", "")) for a in self.attaquants.values])
 
         bdmet = - int(cbilan.edpm.text.replace(",", "")) + int(cbilan.emcdr.text.replace(",", "")) + int(rffd[0])
         bdcri = - int(cbilan.edpc.text.replace(",", "")) + int(cbilan.eccdr.text.replace(",", "")) + int(rffd[1])
