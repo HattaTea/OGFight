@@ -545,13 +545,15 @@ class Ogfight(App):
                         else: # ss
                             j.econso.text = format(1 + round(kconso * ((1000+ 5* (abs(int(kcdep.split(" - ")[2]) - int(kcarr.split(" - ")[2])))) / 35000) * (int(j.fvit.vitesse)/100+1)**2), ",d")
                             j.etv.text = str(datetime.timedelta(seconds = round((10 + (35000/int(j.fvit.vitesse)*sqrt((1000000+1000+ (abs(int(kcdep.split(" - ")[2]) - int(kcarr.split(" - ")[2]))) *5*5000)/kvitesse))) / int(self.param.vitesse_uni)))).split(".")[0]
-                    else: # gal
-                        j.econso.text = format(1 + round(kconso * ((2700 + 95 * (int(self.param.nb_ss) % abs(int(kcdep.split(" - ")[1]) - int(kcarr.split(" - ")[1]))))/35000) * (int(j.fvit.vitesse)/100+1)**2), ",d")
-                        j.etv.text = str(datetime.timedelta(seconds = round((10 + (35000/int(j.fvit.vitesse)*sqrt((2700000+(int(self.param.nb_ss) % abs(int(kcdep.split(" - ")[1]) - int(kcarr.split(" - ")[1])))*95000)/kvitesse))) / int(self.param.vitesse_uni)))).split(".")[0]
-                else: # uni
-                    j.econso.text = format(1 + round(kconso * ((4 * (int(self.param.nb_gal) % abs(int(kcdep.split(" - ")[0]) - int(kcarr.split(" - ")[0]))))/7) * (int(j.fvit.vitesse)/100+1)**2), ",d")
-                    j.etv.text = str(datetime.timedelta(seconds = round((10 + (35000/int(j.fvit.vitesse)*sqrt((int(self.param.nb_gal) % abs(int(kcdep.split(" - ")[0]) - int(kcarr.split(" - ")[0])))*20000000/kvitesse))) / int(self.param.vitesse_uni)))).split(".")[0]
-            
+                        else: # gal
+                            ecart = min([(dss - ass) % int(self.param.nb_ss), (ass - dss) % int(self.param.nb_ss)])
+                            j.econso.text = format(1 + round(kconso * ((2700 + 95 * ecart)/35000) * (int(j.fvit.vitesse)/100+1)**2), ",d")
+                            j.etv.text = str(datetime.timedelta(seconds = round((10 + (35000/int(j.fvit.vitesse)*sqrt((2700000 + ecart * 95000) / kvitesse))) / int(self.param.vitesse_uni)))).split(".")[0]
+                    else: # uni
+                        ecart = min([(agal - dgal) % int(self.param.nb_gal), (dgal - agal) % int(self.param.nb_gal)])
+                        j.econso.text = format(1 + round(kconso * ( (4 * ecart /7) * (int(j.fvit.vitesse)/100+1)**2)), ",d")
+                        j.etv.text = str(datetime.timedelta(seconds = round((10 + (35000 / int(j.fvit.vitesse) * sqrt( ecart * 20000000/ kvitesse)))  / int(self.param.vitesse_uni)) )).split(".")[0]
+                
                 j.efret.text = format(int(kfret), ",d")
 
             except:
