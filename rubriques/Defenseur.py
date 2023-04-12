@@ -77,6 +77,7 @@ class Defenseurs(FGridLayout):
         natt.ressources.bind(metal = self.actu_pillage)
         natt.ressources.bind(cristal = self.actu_pillage)
         natt.ressources.bind(deuterium = self.actu_pillage)
+        natt.maj_tvc = self.maj_tvc        
 
         vtab = Button(text = "D{}".format(len(self.values)+1))
         natt.finput.bind(pseudo = vtab.setter("text"))
