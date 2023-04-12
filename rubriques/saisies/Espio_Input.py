@@ -1,19 +1,17 @@
 # coding : utf-8
 
+
 """
     OGFight - Simulateur de combat pour Ogame FDV
     Copyright (C) 2023  HattaTea
-
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
@@ -22,16 +20,30 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.uix.label import Label
+from kivy.uix.popup import Popup
+from kivy.uix.scrollview import ScrollView
 
+from Datas_manager import Datas_manager
 
 class Espio_Input(GridLayout):
 
     def __init__(self, **kwargs):
         super(Espio_Input, self).__init__(**kwargs)
 
+        self.distrib = Datas_manager()
+
         self.cols = 2
         self.size_hint = (1, None)
-        self.height = 90
+        self.height = 120
+
+        self.b_charger = Button(text = "Charger", size_hint = (1, None), height = 30)
+        self.b_charger.bind(on_press = self.load)
+        self.add_widget(self.b_charger)
+
+        self.b_save = Button(text = "Sauvegarder", size_hint = (1, None), height = 30)
+        self.b_save.bind(on_press = self.save)
+        self.add_widget(self.b_save)
+
         self.input = TextInput(text = "Copier/Coller l'intégralité du RE ici")
         
         self.fbut = GridLayout(rows = 3, size_hint = (0.4, 1))
@@ -48,7 +60,7 @@ class Espio_Input(GridLayout):
         self.add_widget(self.input)        
         self.add_widget(self.fbut)
 
-        self.default = []
+        self.res = []
         
     def get(self, res):
         pass
@@ -575,7 +587,33 @@ class Espio_Input(GridLayout):
                                         pass
                                     break
 
-        res = [joueur, dock, flotte, defense, batiment, recherche, batiment_fdv, recherche_fdv]
+        self.res = [joueur, dock, flotte, defense, batiment, recherche, batiment_fdv, recherche_fdv]
 
-        self.get(res)
+        self.get(self.res)
         #print(res)
+
+    def save(self, *arg):
+        self.distrib.add_rapport((self.res[0]["date"], self.res[0]["Joueur"], self.input.text))
+
+    def load(self, *arg):
+        
+        def valid(val):
+            self.input.text = val
+            self.get_text()
+        
+        scroll = ScrollView()
+        fliste = GridLayout(cols = 1, size_hint = (1, None), spacing = [0, 10],padding = [20, 20])
+        for v in self.distrib.load():
+            fv = GridLayout(cols = 3, size_hint = (1, None), height = 30)
+            fv.add_widget(Label(text = v[1], size_hint = (None, 1), width = 150))
+            fv.add_widget(Label(text = v[2]))
+            bali = Button(text = "Valider", size_hint = (None, 1), width = 80)
+            bali.bind(on_press = lambda e, vv=v[3] : valid(vv))
+            fv.add_widget(bali)
+            fliste.add_widget(fv)
+            fliste.height += 35
+        scroll.add_widget(fliste)
+
+        popup = Popup(title = "Charger un rapport", content = scroll,
+                      size_hint = (0.7, 0.7))
+        popup.open()
