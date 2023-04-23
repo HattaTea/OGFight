@@ -593,7 +593,10 @@ class Espio_Input(GridLayout):
         #print(res)
 
     def save(self, *arg):
-        self.distrib.add_rapport((self.res[0]["date"], self.res[0]["Joueur"], self.input.text))
+        try:
+            self.distrib.add_rapport((self.res[0]["date"], self.res[0]["Joueur"], self.input.text))
+        except:
+            pass
 
     def load(self, *arg):
         
