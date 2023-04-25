@@ -152,12 +152,13 @@ class Defenseurs(FGridLayout):
                 na.fcoord.position = a.fcoord.position
 
                 for v in a.fflotte.avaisseaux:
-                    try:
-                        wq = float(a.fflotte.restants[a.fflotte.avaisseaux[v]].text.split(" ")[-1])
+                    try:                                            
                         if v in a.fflotte.vaisseaux:
+                            wq = float(a.fflotte.restants[a.fflotte.avaisseaux[v]].text.split(" ")[-1])
                             wz = str(round(wq))
                         else:
-                            wz = str(round(wz*0.7)) # Ingénieur ?
+                            wq = float(a.fflotte.vals[v].text)
+                            wz = str(round(wq*0.7)) # Ingénieur ?
                     except:
                         wz = "0"
                     na.fflotte.vals[v].text = wz
