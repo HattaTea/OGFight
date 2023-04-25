@@ -22,6 +22,9 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.button import Button
+from kivy.uix.checkbox import CheckBox
+
+from kivy.properties import BooleanProperty
 
 from .Coords import Coords
 from .Jinput import Jinput
@@ -35,6 +38,8 @@ from .Fdv_manuel import Fdv_manuel
 
 
 class Attaquant(GridLayout):
+    inge = BooleanProperty(False)
+    
     def __init__(self, num, defenseur = False, **kwargs):
         super(Attaquant, self).__init__(**kwargs)
         self.cols = 1
@@ -97,6 +102,13 @@ class Attaquant(GridLayout):
         self.cfdv.bind(fdv = setm_fdv)
         self.b_fdv.bind(on_press = self.cfdv.open)
 
+        if defenseur:
+            self.finge = GridLayout(cols = 2, size_hint = (1, None), height = 30)
+            self.linge = Label(text = "Ingénieur :")
+            self.einge = CheckBox()
+            self.einge.bind(active = self.setter("inge"))
+            self.finge.add_widget(self.linge)
+            self.finge.add_widget(self.einge)        
 
         self.fvatt.add_widget(self.finput)
         self.fvatt.add_widget(self.fclasses)
@@ -109,6 +121,8 @@ class Attaquant(GridLayout):
             self.fvatt.add_widget(self.fvit)
             self.fvatt.add_widget(self.fvol)
         self.fvatt.add_widget(self.b_fdv)
+        if defenseur:
+            self.fvatt.add_widget(self.finge)        
 
         self.fsvatt.add_widget(self.fvatt)
         self.add_widget(self.fsvatt)      
