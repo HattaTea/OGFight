@@ -158,7 +158,7 @@ class Defenseurs(FGridLayout):
                             wz = str(round(wq))
                         else:
                             wq = float(a.fflotte.vals[v].text)
-                            wz = str(round(wq*0.7)) # Ingénieur ?
+                            wz = str(round(wq*0.7))  if not a.inge else str(round(wq*0.85))
                     except:
                         wz = "0"
                     na.fflotte.vals[v].text = wz
