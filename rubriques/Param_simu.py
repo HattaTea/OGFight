@@ -27,7 +27,7 @@ from kivy.uix.checkbox import CheckBox
 
 from kivy.properties import StringProperty, BooleanProperty
 
-from widgets import MyDropDown, Label_Button, FGridLayout
+from mywidgets import MyDropDown, Label_Button, FGridLayout
 
 
 class Param_simu(FGridLayout):
