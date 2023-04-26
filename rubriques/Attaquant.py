@@ -24,7 +24,7 @@ from kivy.uix.button import Button
 
 from kivy.properties import ListProperty
 
-from widgets import FGridLayout
+from mywidgets import FGridLayout
 from .saisies import Attaquant
 
 
