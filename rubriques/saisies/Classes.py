@@ -21,7 +21,7 @@
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 
-from widgets import MyCheckBox
+from mywidgets import MyCheckBox
 
 from kivy.properties import StringProperty
 
