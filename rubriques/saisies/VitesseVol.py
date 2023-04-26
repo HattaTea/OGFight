@@ -25,7 +25,7 @@ from kivy.uix.button import Button
 
 from kivy.properties import NumericProperty
 
-from widgets import MyDropDown, Label_Button
+from mywidgets import MyDropDown, Label_Button
 
 
 class VitesseVol(GridLayout):
