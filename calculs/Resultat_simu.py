@@ -21,7 +21,7 @@
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 
-from widgets import FGridLayout
+from mywidgets import FGridLayout
 
 
 class Resultat(FGridLayout):
