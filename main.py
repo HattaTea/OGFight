@@ -179,7 +179,7 @@ if __name__ == "__main__":
     from kivy.uix.popup import Popup
 
     # local
-    from widgets import Label_Button, Fond
+    from mywidgets import Label_Button, Fond
     from rubriques import Attaquants, Defenseurs, Param_simu
     from rubriques.saisies.Recyclage import Recyclage
     from calculs import Bilan_vagues, Resultat
