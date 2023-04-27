@@ -159,7 +159,7 @@ def Fighting(attaquants, defenseurs, cible):
                 "defenseur" : {"alive" : defenseurs,
                             "dead" : detruit_def},
                 "rounds" : rounds})
-    
+
 
 
 
@@ -245,6 +245,7 @@ if __name__ == "__main__":
                     self.bilan_vagues.open()
                 except:
                     pass
+            self.param.b_recap.bind(on_press = lambda e, lb = self.lia_bilan: self.bilan_vagues.maj_bilan(lb))
             self.param.b_recap.bind(on_press = aff_bi)
 
 
@@ -312,7 +313,7 @@ if __name__ == "__main__":
                                     nb += 1
                             vals.append(nb*coef)
                         except:
-                            print(bi)
+                            pass
                     try:
                         a.fflotte.restants[a.fflotte.avaisseaux[v]].text = "-> {}".format(round(int(eval("a.fflotte.{}".format(a.fflotte.avaisseaux[v]))) * (sum(vals)/len(vals))/int(eval("a.fflotte.{}".format(a.fflotte.avaisseaux[v])))))
                     except:          
@@ -341,9 +342,9 @@ if __name__ == "__main__":
             # calculs
 
             # victoires attaquants, défenseurs, match nul
-            vica = 0
-            vicd = 0
-            vicn = 0
+            vica = sum([1 for x in bilan if not len(x["defenseur"]["alive"])])
+            vicd = sum([1 for x in bilan if not len(x["attaquant"]["alive"])])
+            vicn = len(bilan) - vica - vicd
 
             # pertes par ressources - attaquants, défenseurs
             apm = 0
@@ -374,71 +375,61 @@ if __name__ == "__main__":
             pointa = 1        
             pointd = 1
 
-            for la in bilan:
-                # victoires
-                if not len(la["attaquant"]["alive"]):
-                    vicd += 1
-                if not len(la["defenseur"]["alive"]):
-                    vica += 1
-                if len(la["attaquant"]["alive"]) and len(la["defenseur"]["alive"]):
-                    vicn += 1
-                
+            for la in bilan:                
                 # pertes attaquants
+                adeads = []
                 for vr in la["attaquant"]["dead"]:
-                    vr = sorted(vr, key= lambda a : a[0])
-                    wvr = [wr[0] for wr in vr ]
-                    x = 0
-                    while x < len(wvr):
-                        w = wvr.count(wvr[x])
-                        ress = eval(livaisseaux[vr[x][0]].replace(" ", "_"))().ress
-                        apm += ress[0]*w*coef
-                        apc += ress[1]*w*coef
-                        apd += ress[2]*w*coef
-                        cdrfm += ress[0]*w*coef
-                        cdrfc += ress[1]*w*coef
-                        cdrfd += ress[2]*w*coef
-                        pointa += sum(ress)*w*coef
-                        x += w             
-                
-                # pertes défenseurs
-                for vrd in la["defenseur"]["dead"]:
-                    vrd = sorted(vrd, key = lambda a : a[0])
-                    wvrd = [wv[0] for wv in vrd]
-                    x = 0
-                    while x < len(vrd):
-                        w = wvrd.count(wvrd[x])
-                        vdd = eval(livaisseaux[vrd[x][0]].replace(" ", "_"))()
-                        ress = vdd.ress
-                        dpm += ress[0]*w*coef
-                        dpc += ress[1]*w*coef
-                        dpd += ress[2]*w*coef
-                        if isinstance(vdd, Vaisseau) or isinstance(vdd, Satellite_solaire) or isinstance(vdd, Foreuse):
-                            cdrfm += ress[0]*w*coef
-                            cdrfc += ress[1]*w*coef
-                            cdrfd += ress[2]*w*coef
+                    adeads += list([vrr[0] for vrr in vr])
+                for ad in set(adeads):
+                    nbv = adeads.count(ad)*coef
+                    ress = eval(livaisseaux[ad].replace(" ", "_"))().ress
+                    
+                    apm += ress[0]*nbv
+                    apc += ress[1]*nbv
+                    apd += ress[2]*nbv
+                    cdrfm += ress[0]*nbv
+                    cdrfc += ress[1]*nbv
+                    cdrfd += ress[2]*nbv
+                    pointd += sum(ress)*nbv
 
-                        if isinstance(vdd, Defense) and not isinstance(vdd, Satellite_solaire) and not isinstance(vdd, Foreuse):
-                            cdrdm += ress[0]*w*coef
-                            cdrdc += ress[1]*w*coef
-                            cdrdd += ress[2]*w*coef
-                        pointd += sum(ress)*w*coef
-                        x += w 
+                # pertes défenseurs
+                ddeads = []
+                for vrd in la["defenseur"]["dead"]:
+                    ddeads += list([wrd[0] for wrd in vrd])
+                for dd in set(ddeads):
+                    nbv = ddeads.count(dd)*coef
+                    vdd = eval(livaisseaux[dd].replace(" ", "_"))()
+                    ress = vdd.ress
+                    dpm += ress[0]*nbv
+                    dpc += ress[1]*nbv
+                    dpd += ress[2]*nbv
+                    if isinstance(vdd, Vaisseau) or isinstance(vdd, Satellite_solaire) or isinstance(vdd, Foreuse):
+                        cdrfm += ress[0]*nbv
+                        cdrfc += ress[1]*nbv
+                        cdrfd += ress[2]*nbv
+                    if isinstance(vdd, Defense) and not isinstance(vdd, Satellite_solaire) and not isinstance(vdd, Foreuse):
+                        cdrdm += ress[0]*nbv
+                        cdrdc += ress[1]*nbv
+                        cdrdd += ress[2]*nbv
+                    pointd += sum(ress)*nbv
 
                 # survivants attaquants
-                for asu in la["attaquant"]["alive"]:
+                for asu in set([(x[0], x[6]) for x in la["attaquant"]["alive"]]):
+                    nbvasu = [x[0] for x in la["attaquant"]["alive"]].count(asu[0])*coef
                     asux = eval(livaisseaux[asu[0]].replace(" ", "_"))()
+                    fret_alive += asu[1]*nbvasu
                     if asux.__class__.__name__ == "Faucheur":
-                        ffra += asux.fret*coef
-                    fret_alive += asu[6]*coef
-                    pointa += sum(asux.ress)*coef
+                        ffra += fret_alive
+                    pointa += sum(asux.ress)*nbvasu
 
                 # survivants défenseurs
-                for dsu in la["defenseur"]["alive"]:
+                for dsu in set([(y[0], y[6]) for y in la["defenseur"]["alive"]]):
+                    nbvasu = [x[0] for x in la["defenseur"]["alive"]].count(dsu[0])*coef
                     dsux = eval(livaisseaux[dsu[0]].replace(" ", "_"))()
                     if dsux.__class__.__name__ == "Faucheur":
-                        ffrd += dsu[6]*coef
+                        ffrd += dsu[1]*coef
                     pointd += sum(dsux.ress)*coef   
-                    
+
             # Popup résultat
             cbilan = Resultat()
 
@@ -581,9 +572,8 @@ if __name__ == "__main__":
                     info_bilan["fret"]["defenseur"][self.defenseurs.values.index(fd)] += int(fd.efret.text.replace(",", ""))
                     info_bilan["conso"]["defenseur"][self.defenseurs.values.index(fd)] += int(fd.econso.text.replace(",", ""))                
 
-            self.lia_bilan = self.lia_bilan[:self.attaquants.nvague] # effacement du précédent bilan de la vague si existant
-            self.lia_bilan.append(info_bilan)
-            self.bilan_vagues.maj_bilan(self.lia_bilan)
+
+            self.bilan_vagues.values = self.lia_bilan[:self.attaquants.nvague] + [info_bilan]
 
 
         def make_recyclage(self, metal, cristal):
@@ -728,8 +718,7 @@ if __name__ == "__main__":
             pass
             
 
-# Lancement
-#if __name__ == "__main__":
+
 
     if hasattr(sys, '_MEIPASS'):
         resource_add_path(os.path.join(sys._MEIPASS))
