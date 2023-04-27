@@ -52,6 +52,11 @@ class Bilan_vagues(Popup):
         self.f_att = GridLayout(cols = 1)
         self.f_def = GridLayout(cols = 1)
 
+        self.values = []
+
+    def open(self, *arg):
+        self.maj_bilan()
+        super().open(*arg)
 
     def switch(self, ins):
         if ins == self.b_att and self.faff.children[0] != self.f_att:
@@ -62,7 +67,7 @@ class Bilan_vagues(Popup):
             self.faff.add_widget(self.f_def)
             
 
-    def maj_bilan(self, li_res):
+    def maj_bilan(self, *arg):
         #print("\nli_res :\n", li_res, "\n/\n")
         self.f_att.clear_widgets()
         self.f_def.clear_widgets()
@@ -74,7 +79,7 @@ class Bilan_vagues(Popup):
         dica_def = {}
         pillage = [0, 0, 0]
         dic_conso = {}
-        for r in li_res:
+        for r in self.values:
             vatt = {}
             vdef = {}
             vatta = {}
@@ -86,34 +91,34 @@ class Bilan_vagues(Popup):
                 for ata in s["attaquant"]["alive"]:
                     kata = eval(livaisseaux[ata[0]].replace(" ", "_"))().ress
                     if ata[7] not in vatta:
-                        vatta[ata[7]] = sum(kata)
+                        vatta[ata[7]] = sum(kata)*r["coef"]
                     else:
-                        vatta[ata[7]] += sum(kata)
+                        vatta[ata[7]] += sum(kata)*r["coef"]
 
                 for raa in s["attaquant"]["dead"]:
                     for ra in raa:
                         kra = eval(livaisseaux[ra[0]].replace(" ", "_"))().ress
                         if ra[7] not in vatt:
                             vatt[ra[7]] = {"metal" : 0, "cristal" : 0, "deut" : 0}
-                        vatt[ra[7]]["metal"] += kra[0]
-                        vatt[ra[7]]["cristal"] += kra[1]
-                        vatt[ra[7]]["deut"] += kra[2]
+                        vatt[ra[7]]["metal"] += kra[0]*r["coef"]
+                        vatt[ra[7]]["cristal"] += kra[1]*r["coef"]
+                        vatt[ra[7]]["deut"] += kra[2]*r["coef"]
 
                 for dea in s["defenseur"]["alive"]:
                     kdea = eval(livaisseaux[dea[0]].replace(" ", "_"))().ress
                     if dea[7] not in vdefa:
-                        vdefa[dea[7]] = sum(kdea)
+                        vdefa[dea[7]] = sum(kdea)*r["coef"]
                     else:
-                        vdefa[dea[7]] += sum(kdea)
+                        vdefa[dea[7]] += sum(kdea)*r["coef"]
 
                 for rdd in s["defenseur"]["dead"]:
                     for rd in rdd:
                         krd = eval(livaisseaux[rd[0]].replace(" ", "_"))().ress
                         if rd[7] not in vdef:
                             vdef[rd[7]] = {"metal" : 0, "cristal" : 0, "deut" : 0}
-                        vdef[rd[7]]["metal"] += krd[0]
-                        vdef[rd[7]]["cristal"] += krd[1]
-                        vdef[rd[7]]["deut"] += krd[2]
+                        vdef[rd[7]]["metal"] += krd[0]*r["coef"]
+                        vdef[rd[7]]["cristal"] += krd[1]*r["coef"]
+                        vdef[rd[7]]["deut"] += krd[2]*r["coef"]
 
             for ats in vatta:
                 vatta[ats] = round(vatta[ats] / len(r["li_res"]))
@@ -122,17 +127,17 @@ class Bilan_vagues(Popup):
 
             for a in vatt:
                 for rc in vatt[a]:
-                    vatt[a][rc] = round(vatt[a][rc] / len(r["li_res"])) - r["conso"]["attaquant"][a] if rc == "deut" else  round(vatt[a][rc] / len(r["li_res"]))
+                    vatt[a][rc] = round(vatt[a][rc] / len(r["li_res"])) - r["conso"]["attaquant"][a]*r["coef"] if rc == "deut" else  round(vatt[a][rc] / len(r["li_res"]))
             for d in vdef:
                 for rcs in vdef[d]:
-                    vdef[d][rcs] = round(vdef[d][rcs] / len(r["li_res"])) - r["conso"]["defenseur"][d] if rcs == "deut" else round(vdef[d][rcs] / len(r["li_res"]))
+                    vdef[d][rcs] = round(vdef[d][rcs] / len(r["li_res"])) - r["conso"]["defenseur"][d]*r["coef"] if rcs == "deut" else round(vdef[d][rcs] / len(r["li_res"]))
 
             for tc in r["conso"]:
                 for c in r["conso"][tc]:
                     if c not in dic_conso:
-                        dic_conso[c] = r["conso"][tc][c]
+                        dic_conso[c] = r["conso"][tc][c]*r["coef"]
                     else:
-                        dic_conso[c] += r["conso"][tc][c]    
+                        dic_conso[c] += r["conso"][tc][c]*r["coef"]
 
             for attas in vatta:
                 if attas not in dica_att:
