@@ -115,24 +115,16 @@ def Fighting(attaquants, defenseurs, cible):
         return v        
 
     for rounds in range(6):
-        tr = datetime.datetime.now()
-        #print("round ", rounds+1, tr)
         
         damages_a = [[] for x in defenseurs]
         for a in attaquants:
             get_damagesa(a[:2])
-            
-        #print("get att : ", datetime.datetime.now()-tr)
         defenseurs = [apply_damages(xx, yy) for xx, yy in zip(damages_a, defenseurs)]
-        ar = datetime.datetime.now()
-        #print("les attaquant ont tirés en :", ar - tr)
 
         damages_d = [[] for y in attaquants]
         for d in defenseurs:
             get_damagesd(d[:2]) 
         attaquants =  [apply_damages(xx, yy) for xx, yy in zip(damages_d, attaquants)]
-        dr = datetime.datetime.now()
-        #print("les défenseurs ont tirés en : ", dr - ar)
         
         # listage des cadavres 
         dta = [x for x in attaquants if x[8]==1] 
@@ -140,9 +132,6 @@ def Fighting(attaquants, defenseurs, cible):
 
         detruit_att.append(dta)
         detruit_def.append(dtd)
-
-        ddr = datetime.datetime.now()
-        #print("Les destructions ont pris : ", ddr - dr)
         
         # fin ou next turn
         if not len(attaquants) or not len(defenseurs):
@@ -153,7 +142,6 @@ def Fighting(attaquants, defenseurs, cible):
             defenseurs = np.asarray([snext_turn(yy) for yy in defenseurs if not yy[8]], dtype = "i4")
 
 
-    #print("Fin du combat\n", flottes_att, "\n\n", flottes_def, "\n\n")
     cible.append({"attaquant" : {"alive" : attaquants,
                             "dead" : detruit_att},
                 "defenseur" : {"alive" : defenseurs,
@@ -259,7 +247,12 @@ if __name__ == "__main__":
             # coef si trop de vaisseaux
             vcoef = max([sum(sum([int(eval("a.fflotte.{}".format(a.fflotte.avaisseaux[v]))) for v in a.fflotte.avaisseaux]) for a in self.attaquants.values)],
                         [sum(sum([int(eval("a.fflotte.{}".format(a.fflotte.avaisseaux[v]))) for v in a.fflotte.avaisseaux]) for a in self.defenseurs.values)])[0]
-            coef = 1 if vcoef < 100000 else 10 if vcoef < 1000000 else 100 if vcoef < 10000000 else 1000
+            
+            if self.param.coef:
+                coef = 1 if vcoef < 100000 else 10 if vcoef < 1000000 else 100 if vcoef < 10000000 else 1000
+            else:
+                coef = 1
+
 
             # génération des flottes
             def gen_flotte(joueur):
