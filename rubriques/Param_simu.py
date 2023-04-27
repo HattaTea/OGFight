@@ -43,7 +43,8 @@ class Param_simu(FGridLayout):
     nb_gal = StringProperty("5")
     nb_ss = StringProperty("499")
     deut_cdr = BooleanProperty(False)
-    
+    coef = BooleanProperty(True)
+
     def __init__(self, **kwargs):
         super(Param_simu, self).__init__(**kwargs)
 
@@ -57,7 +58,7 @@ class Param_simu(FGridLayout):
         self.sparam = ScrollView()
         self.add_widget(self.sparam)
 
-        self.sfparam = GridLayout(cols = 1, size_hint = (1, None), height = 400)
+        self.sfparam = GridLayout(cols = 1, size_hint = (1, None), height = 450)
         self.sparam.add_widget(self.sfparam)
 
         self.fsaisi = GridLayout(cols = 1, spacing = [10, 10], size_hint = (1, None), height = 120)
@@ -168,6 +169,24 @@ class Param_simu(FGridLayout):
         self.fdcdr.add_widget(self.edcdr)
         self.fvuni.add_widget(self.fdcdr)
         
+        self.fcoef = GridLayout(cols = 2, size_hint = (1, None), height = 30)
+        self.lcoef = Label(text = "Appliquer un coef :")
+        self.ecoef = CheckBox(active = True, size_hint = (None, 1), width = 40)
+        self.ecoef.bind(active = self.setter("coef"))
+        self.fcoef.add_widget(self.lcoef)
+        self.fcoef.add_widget(self.ecoef)
+        self.fvuni.add_widget(self.fcoef)
+        
+        
+        """
+        self.fswitch = GridLayout(cols = 2, size_hint = (1, None), height = 30)
+        self.lswitch = Label(text = "Inverser Attaquants / Défenseurs :")
+        self.bswitch = Button(text = "Inverser", size_hint = (None, 1), width= 40)
+        self.bswitch.bind(on_press = lambda e : self.switch())
+        self.fswitch.add_widget(self.lswitch)
+        self.fswitch.add_widget(self.bswitch)
+        self.fvuni.add_widget(self.fswitch)
+        """
         self.funi.add_widget(self.fvuni)
         self.sfparam.add_widget(self.funi)
 
@@ -283,4 +302,7 @@ class Param_simu(FGridLayout):
 
         
     def actu(self, *arg):
+        pass
+
+    def switch(self, *arg):
         pass
