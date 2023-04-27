@@ -555,6 +555,7 @@ if __name__ == "__main__":
             info_bilan["fret"] = {"attaquant" : {}, "defenseur" : {}}
             info_bilan["conso"] = {"attaquant" : {}, "defenseur" : {}}
             info_bilan["li_res"] = bilan
+            info_bilan["coef"] = coef
 
             for fa in self.attaquants.values:
                 if self.attaquants.values.index(fa) not in info_bilan["fret"]["attaquant"]:
