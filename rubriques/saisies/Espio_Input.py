@@ -901,7 +901,6 @@ class Espio_Input(GridLayout):
                          "Matrice de protection psionique" : 0,
                          "Boucliers runiques" : 0}
         
-
         for vp in plas:
             for p in vp:
                 try:
@@ -931,11 +930,21 @@ class Espio_Input(GridLayout):
                         recherche[p] = val
                     except:
                         pass
-                if p in recherche_fdv:
+                
+                for r in recherche_fdv:
                     try:
-                        recherche_fdv[p] += val
+                        liste = ['Révision complète (chasseur_leger)', 'Révision complète (croiseur)', 
+                                 'Révision complète (vaisseau_de_bataille)', 'Révision complète (traqueur)', 
+                                 'Révision complète (bombardier)', 'Révision complète (destructeur)']
+                        recherche_fdv[liste[int(p[-1])]] += val
+                        break
                     except:
-                        pass              
+                        if p[:16] == r[:16]:
+                            try:
+                                recherche_fdv[r] += val
+                                break
+                            except:
+                                pass              
 
                 if p == "Vaisseau de batai...":
                     flotte["Vaisseau de bataille"] += val
