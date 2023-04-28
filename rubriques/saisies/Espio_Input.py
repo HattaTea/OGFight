@@ -588,9 +588,24 @@ class Espio_Input(GridLayout):
                                     break
 
         self.res = [joueur, dock, flotte, defense, batiment, recherche, batiment_fdv, recherche_fdv]
+        success = False
+        for v in flotte:
+            if flotte[v] != 0:
+                success = True 
+                break
+        if not success:
+            for d in defense:
+                if defense[d] != 0:
+                    success = True
+                    break
+        if success:
+            self.get(self.res)
+        else:
+            try:
+                self.from_empire()
+            except:
+                pass
 
-        self.get(self.res)
-        #print(res)
 
     def save(self, *arg):
         try:
@@ -620,3 +635,328 @@ class Espio_Input(GridLayout):
         popup = Popup(title = "Charger un rapport", content = scroll,
                       size_hint = (0.7, 0.7))
         popup.open()
+
+
+    def from_empire(self):
+        ents =  []
+        for s in self.input.text.split("\n")[1:]:
+            if s == "":
+                ents.remove(ents[-1])
+                break
+            else:
+                ents.append(s)
+
+        ind_ent = ents.index("Ressources")
+        def to_remove(liste):
+            ignore = ["Ressources", "Entrepôt", "Installations", "Défense", "Recherche", "Flotte", "Les Humains Bât...",
+                      "Les Humains Rec...", "Mécas Bâtiment", "Mécas Recherche", "Kaeleshs Bâtiment", "Kaeleshs Recher...",
+                      "Roctas Bâtiment", "Roctas Recherche"]
+            for i in ignore:
+                try:
+                    liste.remove(i)
+                except:
+                    pass
+            return liste
+        
+        vents = ["Nom","Coordonnées", "Energie / Diamètre", "Température"] + to_remove(ents[ind_ent+1:])
+
+        suite = self.input.text.split(ents[-1])[-1].split("\n")
+        while "Energie:" in suite:
+            suite.remove("Energie:")
+        while "" in suite:
+            suite.remove("")
+        while 'Aucun objet équipé.' in suite:
+            suite.remove('Aucun objet équipé.')
+
+        plas = []
+        res = {}
+        for pla in range(50):
+            try:
+                for ve in range(len(vents)):
+                    went = vents[ve]
+                    while went in res:
+                        try:
+                            wn = int(went[-1])
+                            went = went[:-1] + str(wn+1)
+                        except:
+                            went = went + "1"
+
+                    res[went] = suite[pla*len(vents) + ve]
+                plas.append(res)                
+                res = {}
+            except:
+                pass
+
+
+        joueur = {"Joueur" : "",
+                  "Classe" : "",
+                  "Classe dalliance" : "",
+                  "Probabilité de contre-espionnage" : 0,
+                  "date" : "",
+                  "coord" : ""}
+
+        planete = {"met" : 0,
+                   "cri" : 0,
+                   "deut" : 0,
+                   "energie" : 0,
+                   "nourriture" : 0,
+                   "cdr" : 0,
+                   "acti" : 0}
+
+        dock = {"Chasseur léger" : 0,
+                "Chasseur lourd" : 0,
+                "Croiseur" : 0,
+                "Vaisseau de bataille" : 0,
+                "Traqueur" : 0,
+                "Bombardier" : 0,
+                "Destructeur" : 0,
+                "Étoile de la mort" : 0,
+                "Faucheur" : 0,
+                "Éclaireur" : 0,
+                "Petit transporteur" : 0,
+                "Grand transporteur" : 0,
+                "Recycleur" : 0,
+                "Vaisseau de colonisation" : 0}
+
+        flotte = {"Chasseur léger" : 0,
+                  "Chasseur lourd" : 0,
+                  "Croiseur" : 0,
+                  "Vaisseau de bataille" : 0,
+                  "Traqueur" : 0,
+                  "Bombardier" : 0,
+                  "Destructeur" : 0,
+                  "Étoile de la mort" : 0,
+                  "Faucheur" : 0,
+                  "Éclaireur" : 0,
+                  "Petit transporteur" : 0,
+                  "Grand transporteur" : 0,
+                  "Recycleur" : 0,
+                  "Sonde despionnage" : 0,
+                  "Satellite solaire" : 0,
+                  "Foreuse" : 0,
+                  "Vaisseau de colonisation" : 0}
+
+        defense = {"Lanceur de missiles" : 0,
+                   "Artillerie laser légère" : 0,
+                   "Artillerie laser lourde" : 0,
+                   "Canon de Gauss" : 0,
+                   "Artillerie à ions" : 0,
+                   "Lanceur de plasma" : 0,
+                   "Petit bouclier" : 0,
+                   "Grand bouclier" : 0,
+                   "Missile d`interception" : 0,
+                   "Missile interplanétaire" : 0}
+
+        batiment = {"Mine de métal" : 0,
+                    "Hangar de métal" : 0,
+                    "Mine de cristal" : 0,
+                    "Hangar de cristal" : 0,
+                    "Synthétiseur de deutérium" : 0,
+                    "Réservoir de deutérium" : 0,
+                    "Centrale électrique de fusion" : 0,
+                    "Usine de robots" : 0,
+                    "Usine de nanites" : 0,
+                    "Chantier spatial" : 0,
+                    "Dock spatial" : 0,
+                    "Silo de missiles" : 0,
+                    "Laboratoire de recherche" : 0,
+                    "Dépôt de ravitaillement" : 0,
+                    "Terraformeur" : 0}
+
+        recherche = {"Technologie énergétique" : 0,
+                     "Technologie Laser" : 0,
+                     "Technologie à ions" : 0,
+                     "Technologie hyperespace" : 0,
+                     "Technologie Plasma" : 0,
+                     "Technologie Espionnage" : 0,
+                     "Technologie Ordinateur" : 0,
+                     "Astrophysique" : 0,
+                     "Réseau de recherche" : 0,
+                     "Technologie Graviton" : 0,
+                     "Réacteur à combustion" : 0,
+                     "Réacteur à impulsion" : 0,
+                     "Propulsion hyperespace" : 0,
+                     "Technologie Armes" : 0,
+                     "Technologie Bouclier" : 0,
+                     "Technologie Protection des vaisseaux spatiaux" : 0}
+
+        batiment_fdv = {"Secteur résidentiel" : 0,
+                        "Ferme biosphérique": 0,
+                        "Centre de recherche" : 0,
+                        "Académie des sciences" : 0,
+                        "Centre de neurocalibrage" : 0,
+                        "Extraction par fusion" : 0,
+                        "Réserve alimentaire" : 0,
+                        "Fusion à haute énergie" : 0,
+                        "Tour d’habitation" : 0,
+                        "Laboratoire de biotechnologie" : 0,
+                        "Metropolis" : 0,
+                        "Bouclier planétaire" : 0,
+                        "Enclave stoïque" : 0,
+                        "Culture du cristal" : 0,
+                        "Forge runique" : 0,
+                        "Centre technologique runique" : 0,
+                        "Orictorium" : 0,
+                        "Fusion magmatique" : 0,
+                        "Chambre de disruption" : 0,
+                        "Monument rocheux" : 0,
+                        "Raffinerie de cristaux" : 0,
+                        "Syntoniseur de deutérium" : 0,
+                        "Centre de recherche sur les minéraux" : 0,
+                        "Usine de traitement à haut rendement" : 0,
+                        "Refugium" : 0,
+                        "Condensateur d’antimatière" : 0,
+                        "Salle à vortex" : 0,
+                        "Maison du savoir" : 0,
+                        "Forum de la transcendance" : 0,
+                        "Convecteur d’antimatière" : 0,
+                        "Laboratoire de clonage" : 0,
+                        "Accélérateur par chrysalide" : 0,
+                        "Biomodificateur" : 0,
+                        "Modulateur psionique" : 0,
+                        "Hangar de construction de vaisseau" : 0,
+                        "Supraréfracteur" : 0,
+                        "Chaîne de production" : 0,
+                        "Usine de fusion de cellules" : 0,
+                        "Centre de recherche en robotique" : 0,
+                        "Réseau d’actualisation" : 0,
+                        "Centre d’assemblage automatisé" : 0,
+                        "Centre d’informatique quantique" : 0,
+                        "Transformateur hyperpuissant" : 0,
+                        "Chaîne de production de micropuces" : 0,
+                        "Atelier de montage" : 0,
+                        "Production de masse de puces" : 0,
+                        "Synthétiseur à haut rendement" : 0,
+                        "Nanorobots réparateurs" : 0}
+
+        recherche_fdv = {"Renforcement du général des Mechas" : 0,
+                         "Renforcement d'explorateur Kaelesh" : 0,
+                         "Renfort du collecteur Rocta" : 0,
+                         "IA du dépôt" : 0,
+                         "Terraformeur à haute performance" : 0,
+                         "Terraformeur à plasma" : 0,
+                         "Construction optimisée de silos" : 0,
+                         "Réseau d'analyse superglobal" : 0,
+                         "Planque orbitale" : 0,
+                         "Réseau psionique" : 0,
+                         "Faisceau de traction télékinésique" : 0,
+                         "Technologie de détection améliorée" : 0,
+                         "Sixième sens" : 0,
+                         "Système de propulsion télékinétique" : 0,
+                         "Capteurs gravitationnels" : 0,
+                         "Récupération de chaleur" : 0,
+                         "Module doptimisation" : 0,
+                         "Pilote automatique Slingshot" : 0,
+                         "Moteur à plasma" : 0,
+                         "Moteurs à fusion" : 0,
+                         "Extension despace fret (vaisseaux civils)" : 0,
+                         "Compresseur neuromodal" : 0,
+                         "Révision complète (chasseur léger)" : 0,
+                         "Chasseur léger Mk II" : 0,
+                         "Renforcement à cristaux ioniques (chasseurs lourds)" : 0,
+                         "Surcadençage (chasseur lourd)" : 0,
+                         "Révision complète (croiseur)" : 0,
+                         "Croiseur Mk II" : 0,
+                         "Révision complète (vaisseau de bataille)" : 0,
+                         "Surcadençage (vaisseau de bataille)" : 0,
+                         "Révision complète (traqueur)" : 0,
+                         "Traqueur Mk II" : 0,
+                         "Bombardier Mk II" : 0,
+                         "Révision complète (bombardier)" : 0,
+                         "Destructeur Mk II" : 0,
+                         "Révision complète (destructeur)" : 0,
+                         "Surcadençage (grand transporteur)" : 0,
+                         "Technique de recyclage expérimental" : 0,
+                         "Module à cristaux ioniques" : 0,
+                         "Intensification du bouclier à lobsidienne" : 0,
+                         "Sondage en profondeur" : 0,
+                         "Tête de forage en dimant" : 0,
+                         "Sondage acoustique" : 0,
+                         "Technologie d'extraction sismique" : 0,
+                         "Technique de catalyse" : 0,
+                         "Traitement au sulfure" : 0,
+                         "Système de pompage à haute énergie" : 0,
+                         "Pompes au magma" : 0,
+                         "Extracteurs à haute performance" : 0,
+                         "Extraction" : 0,
+                         "Chaîne de production automatisée" : 0,
+                         "Technologies d'extraction améliorés" : 0,
+                         "Harmonisateur psychique" : 0,
+                         "Intelligence artificielle collective" : 0,
+                         "Batteries volcaniques" : 0,
+                         "Centrales géothermiques" : 0,
+                         "IA de recherche" : 0,
+                         "Neuro-interface" : 0,
+                         "Technologie de laboratoire améliorée" : 0,
+                         "Intelligence collective optimisée" : 0,
+                         "Assistants robotiques" : 0,
+                         "Superordinateur" : 0,
+                         "Supraconducteur à haute température" : 0,
+                         "Émetteur d'énergie à diamants" : 0,
+                         "Stellarator amélioré" : 0,
+                         "Générateur de champ de camouflage" : 0,
+                         "IA de drone améliorée" : 0,
+                         "Propulseurs à faible température" : 0,
+                         "Technique d'armement expérimental" : 0,
+                         "Matrice de protection psionique" : 0,
+                         "Boucliers runiques" : 0}
+        
+
+        for vp in plas:
+            for p in vp:
+                try:
+                    val = int(vp[p].replace(".", ""))
+                except:
+                    try:
+                        wal = ""
+                        for w in vp[p].replace(".", ""):
+                            try:
+                                int(w)
+                                wal += w
+                            except:
+                                break
+                        if len(wal) > 0:
+                            val = int(val)
+                    except:
+                        val = 0
+
+                if p in flotte:
+                    try:
+                        flotte[p] += val
+                    except:
+                        pass
+
+                if p in recherche:
+                    try:
+                        recherche[p] = val
+                    except:
+                        pass
+                if p in recherche_fdv:
+                    try:
+                        recherche_fdv[p] += val
+                    except:
+                        pass              
+
+                if p == "Vaisseau de batai...":
+                    flotte["Vaisseau de bataille"] += val
+                if p == "Sonde d`espionnage":
+                    flotte["Sonde despionnage"] += val
+                if p == "Vaisseau de colon...":
+                    flotte["Vaisseau de colonisation"] += val
+                
+                if p  == "Technologie Prote...":
+                    recherche["Technologie Protection des vaisseaux spatiaux"] = val
+                if p == "Technologie Boucl...":
+                    recherche["Technologie Bouclier"] = val
+                if p == "Réacteur à combus...":
+                    recherche["Réacteur à combustion"] = val
+                if p == "Réacteur à impuls...":
+                    recherche["Réacteur à impulsion"] = val
+                if p == "Propulsion hypere...":
+                    recherche["Propulsion hyperespace"] = val
+                if p == "Technologie hyper...":
+                    recherche["Technologie hyperespace"] = val
+
+        self.res = [joueur, dock, flotte, defense, batiment, recherche, batiment_fdv, recherche_fdv]
+        self.get(self.res)
+        
