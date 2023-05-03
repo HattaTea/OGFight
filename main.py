@@ -22,10 +22,11 @@ from items.Defenses import *
 import numpy as np
 import datetime
 
+###############################
+### / MOTEUR DE COMBAT V9 \ ###
+
 class Fight:
-
-    def __init__(self, attaquants, defenseurs, nb, **kwargs):
-
+    def __init__(self, attaquants, defenseurs, nb):
         self.attaquants = attaquants
         self.defenseurs = defenseurs
 
@@ -41,8 +42,6 @@ class Fight:
             f.join()
 
   
-
-
 def Fighting(attaquants, defenseurs, cible):
 
     dic_rf = {}
@@ -54,11 +53,9 @@ def Fighting(attaquants, defenseurs, cible):
 
     result = {}
 
-
     # liste de liste de destruction des rounds
     detruit_att = []
     detruit_def = []  
-    
 
     def snext_turn(v):
         v[3] = v[2]
@@ -118,12 +115,12 @@ def Fighting(attaquants, defenseurs, cible):
         
         damages_a = [[] for x in defenseurs]
         for a in attaquants:
-            get_damagesa(a[:2])
+            get_damagesa(a[:2]) # id attaque
         defenseurs = [apply_damages(xx, yy) for xx, yy in zip(damages_a, defenseurs)]
 
         damages_d = [[] for y in attaquants]
         for d in defenseurs:
-            get_damagesd(d[:2]) 
+            get_damagesd(d[:2]) # id attaque
         attaquants =  [apply_damages(xx, yy) for xx, yy in zip(damages_d, attaquants)]
         
         # listage des cadavres 
@@ -149,6 +146,175 @@ def Fighting(attaquants, defenseurs, cible):
                 "rounds" : rounds})
 
 
+## \ MOTEUR DE COMBAT V9 / ##
+#############################
+
+##############################
+## / MOTEUR DE COMBAT V10 \ ##
+class Fight_prob:
+    def __init__(self, attaquants, defenseurs, nb):
+        self.attaquants = attaquants
+        self.defenseurs = defenseurs
+
+        self.result = []
+
+        for x in range(nb):
+            self.fighting()
+
+
+    def fighting(self):
+
+        dic_rf = {}
+        for item in livaisseaux:
+            dic_rf[item] = eval(item.replace(" ", "_"))().rf
+        
+        attaquants = np.asarray(self.attaquants, dtype = "i4")
+        defenseurs = np.asarray(self.defenseurs, dtype = "i4")
+
+        result = {}
+
+        # liste de liste de destruction des rounds
+        detruit_att = []
+        detruit_def = []          
+
+        def get_damages(x, cible):
+            return x
+        
+        for rounds in range(6):
+            # nombre de vaisseaux attaquants par type
+            valsa = {}
+            ida = list(set([(x[0], x[1]) for x in attaquants])) # vaisseaux différent
+            nba = [sum([1 if x[0] == y[0] else 0 for x in attaquants]) for y in ida] # nombre de vaisseaux par vaisseaux différents
+            for ea in ida:
+                valsa[ea[0]] = nba[ida.index(ea)]
+
+
+            # nombre de vaisseaux defenseur par type
+            valsd = {}
+            idd = list(set([(x[0], x[1]) for x in defenseurs])) # vaisseaux différent
+            nbd = [sum([1 if x[0] == y[0] else 0 for x in defenseurs]) for y in idd] # nombre de vaisseaux par vaisseaux différents
+            for ed in idd:
+                valsd[ed[0]] = nbd[idd.index(ed)]
+
+            # total tir attaquant par type
+            tira = {}
+            for v in valsa:
+                tira[v] = {}
+                for d in valsd:
+                    try:
+                        tira[v][d] = valsd[d]/sum(nbd) * float(1- 1/dic_rf[livaisseaux[v]][livaisseaux[d]]) * valsa[v] + valsa[v]
+                    except:
+                        tira[v][d] = valsd[d]/sum(nbd) * valsa[v] + valsa[v]
+
+            # total tir defenseur par type
+            tird = {}
+            for vd in valsd:
+                tird[vd] = {}
+                for dd in valsa:
+                    try:
+                        tird[vd][dd] = valsa[dd]/sum(nba) * float(1- 1 / dic_rf[livaisseaux[vd]][livaisseaux[dd]]) * valsd[vd] + valsd[vd]
+                    except:
+                        tird[vd][dd] = valsa[dd]/sum(nba) * valsd[vd] + valsd[vd]
+
+            # proba par attaquant de se faire tirer par chaque def
+            tra = {}
+            for a in valsa:
+                tra[a] = {}
+                for d in valsd:
+                    tra[a][d] = tird[d][a] / valsa[a]
+
+            # proba par def de se faire tirer par chaque attaquant
+            trd = {}
+            for aa in valsd:
+                trd[aa] = {}
+                for dd in tira:
+                    trd[aa][dd] = tira[dd][aa] / valsd[aa]
+
+            # dommages attaquant par vaisseaux
+            dama = {}
+            for dma in valsa:
+                dama[dma] = []
+                for tvd in valsd:
+                    val_tir = [vidd[1] for vidd in idd if vidd[0] == tvd][0]
+                    vda = trd[tvd][dma] * val_tir
+                    mod = vda % val_tir
+                    vdmga = [vda / mod for x in range(mod)] if vda > mod and mod != 0 else [val_tir]
+                    dama[dma] = dama[dma] + vdmga
+
+            # dommages defenseurs par vaisseaux
+            damd = {}
+            for dmd in valsd:
+                damd[dmd] = []
+                for tva in valsa:
+                    val_tir = [vida[1] for vida in ida if vida[0] == tva][0]
+                    vdd = tra[tva][dmd] * val_tir
+                    mod = vdd % val_tir
+                    vdmgd = [vdd / mod for xx in range(mod)] if vdd > mod and mod != 0 else [val_tir]
+                    damd[dmd] = damd[dmd] + vdmgd
+
+            # application des dommages 
+            """
+            [index, attaque, bouclier, w_bouclier, structure, w_structure, fret, pseudo, dead, self.priority]
+            """
+            for a in attaquants:
+                for d in dama:
+                    if d == a[0]:
+                        for t in dama[d]:
+                            if t > a[3]*0.01:
+                                a[3] -= t
+                                if a[3] < 0:
+                                    a[5] += a[3]
+                                    a[3] = 0
+                                    if a[5] <= a[4]*0.7:
+                                        prc = a[5] / a[4]
+                                        verdict = random.random()
+                                        if prc < verdict:
+                                            a[8] = 1
+
+            for aa in defenseurs:
+                for dd in damd:
+                    if dd == aa[0]:
+                        for tt in damd[dd]:
+                            if tt > aa[3]*0.01:
+                                aa[3] -= tt
+                                if aa[3] < 0:
+                                    aa[5] += aa[3]
+                                    aa[3] = 0
+                                    if aa[5] <= aa[4]*0.7:
+                                        prc = aa[5]/aa[4]
+                                        verdict = random.random()
+                                        if prc < verdict:
+                                            aa[8] = 1
+
+            # next turn
+            def snext_turn(v):
+                v[3] = v[2]
+                return v
+
+            # listage des cadavres 
+            dta = [x for x in attaquants if x[8]==1] 
+            dtd = [y for y in defenseurs if y[8]==1]
+
+            detruit_att.append(dta)
+            detruit_def.append(dtd)
+            
+            # fin ou next turn
+            if not len(attaquants) or not len(defenseurs):
+                break
+            else:
+                # destructions + régénération des boucliers
+                attaquants = np.asarray([snext_turn(xx) for xx in attaquants if not xx[8]], dtype = "i4")
+                defenseurs = np.asarray([snext_turn(yy) for yy in defenseurs if not yy[8]], dtype = "i4")
+
+        self.result.append({"attaquant" : {"alive" : attaquants,
+                                           "dead" : detruit_att},
+                                           "defenseur" : {"alive" : defenseurs,
+                                           "dead" : detruit_def},
+                                           "rounds" : rounds})
+
+
+## \ MOTEURR DE COMBAT V10 / ##
+###############################
 
 
 if __name__ == "__main__":
@@ -252,6 +418,7 @@ if __name__ == "__main__":
                 coef = 1 if vcoef < 100000 else 10 if vcoef < 1000000 else 100 if vcoef < 10000000 else 1000
             else:
                 coef = 1
+            print("coef :", coef)
 
 
             # génération des flottes
@@ -285,7 +452,11 @@ if __name__ == "__main__":
                 #time.sleep(0.1)
                 print("\r{0} / {1}".format(nb+1, self.param.nb_simu))
 
-                vf = Fight(gen_flotte(self.attaquants.values), gen_flotte(self.defenseurs.values), 10)
+                if self.param.sprob:
+                    vf = Fight_prob(gen_flotte(self.attaquants.values), gen_flotte(self.defenseurs.values), 10)
+                else:
+                    vf = Fight(gen_flotte(self.attaquants.values), gen_flotte(self.defenseurs.values), 10)
+
                 ls.append(vf)
                 nb += 10
             for l in ls:
