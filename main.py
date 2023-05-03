@@ -177,9 +177,6 @@ class Fight_prob:
         detruit_att = []
         detruit_def = []          
 
-        def get_damages(x, cible):
-            return x
-        
         for rounds in range(6):
             # nombre de vaisseaux attaquants par type
             valsa = {}
@@ -238,7 +235,7 @@ class Fight_prob:
                     val_tir = [vidd[1] for vidd in idd if vidd[0] == tvd][0]
                     vda = trd[tvd][dma] * val_tir
                     mod = vda % val_tir
-                    vdmga = [vda / mod for x in range(mod)] if vda > mod and mod != 0 else [val_tir]
+                    vdmga = [vda / mod for x in range(mod)] if vda > mod and mod != 0 else [vda]
                     dama[dma] = dama[dma] + vdmga
 
             # dommages defenseurs par vaisseaux
@@ -249,7 +246,7 @@ class Fight_prob:
                     val_tir = [vida[1] for vida in ida if vida[0] == tva][0]
                     vdd = tra[tva][dmd] * val_tir
                     mod = vdd % val_tir
-                    vdmgd = [vdd / mod for xx in range(mod)] if vdd > mod and mod != 0 else [val_tir]
+                    vdmgd = [vdd / mod for xx in range(mod)] if vdd > mod and mod != 0 else [vda]
                     damd[dmd] = damd[dmd] + vdmgd
 
             # application des dommages 
