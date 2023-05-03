@@ -44,6 +44,7 @@ class Param_simu(FGridLayout):
     nb_ss = StringProperty("499")
     deut_cdr = BooleanProperty(False)
     coef = BooleanProperty(True)
+    sprob = BooleanProperty(False)
 
     def __init__(self, **kwargs):
         super(Param_simu, self).__init__(**kwargs)
@@ -176,6 +177,14 @@ class Param_simu(FGridLayout):
         self.fcoef.add_widget(self.lcoef)
         self.fcoef.add_widget(self.ecoef)
         self.fvuni.add_widget(self.fcoef)
+
+        self.fsprob = GridLayout(cols = 2, size_hint = (1, None), height = 30)
+        self.lsprob = Label(text = "Calcul probabilistique :")
+        self.esprob = CheckBox(active = False, size_hint = (None, 1), width = 40)
+        self.esprob.bind(active = self.setter("sprob"))
+        self.fsprob.add_widget(self.lsprob)
+        self.fsprob.add_widget(self.esprob)
+        self.fvuni.add_widget(self.fsprob)
         
         
         """
