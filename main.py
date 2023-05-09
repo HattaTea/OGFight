@@ -198,90 +198,91 @@ class Fight_prob:
             for v in valsa:
                 tira[v] = {}
                 for d in valsd:
-                    try:
-                        tira[v][d] = valsd[d]/sum(nbd) * float(1- 1/dic_rf[livaisseaux[v]][livaisseaux[d]]) * valsa[v] + valsa[v]
+                    vpt = valsd[d]/ sum(nbd)
+                    try:         
+                        nbtv = float(1 - 1 / dic_rf[livaisseaux[v].replace(" ", "_")][livaisseaux[d].replace(" ", "_")]) * valsa[v]           
                     except:
-                        tira[v][d] = valsd[d]/sum(nbd) * valsa[v] + valsa[v]
+                        nbtv = 0
+                    tira[v][d] = vpt * nbtv + valsa[v]
 
             # total tir defenseur par type
             tird = {}
             for vd in valsd:
                 tird[vd] = {}
                 for dd in valsa:
+                    vptd = valsa[dd]/ sum(nba)
                     try:
-                        tird[vd][dd] = valsa[dd]/sum(nba) * float(1- 1 / dic_rf[livaisseaux[vd]][livaisseaux[dd]]) * valsd[vd] + valsd[vd]
+                        nbtvd = float(1- 1 / dic_rf[livaisseaux[vd].replace(" ", "_")][livaisseaux[dd].replace(" ", "_")]) * valsd[vd]
                     except:
-                        tird[vd][dd] = valsa[dd]/sum(nba) * valsd[vd] + valsd[vd]
+                        nbtvd = 0
+                    tird[vd][dd] = vptd * nbtvd + valsd[vd]
 
             # proba par attaquant de se faire tirer par chaque def
             tra = {}
             for a in valsa:
                 tra[a] = {}
                 for d in valsd:
-                    tra[a][d] = tird[d][a] / valsa[a]
+                    tra[a][d] = 1 / sum(nbd)#tird[d][a] / valsa[a]
 
             # proba par def de se faire tirer par chaque attaquant
             trd = {}
             for aa in valsd:
                 trd[aa] = {}
-                for dd in tira:
-                    trd[aa][dd] = tira[dd][aa] / valsd[aa]
+                for dd in valsa:
+                    trd[aa][dd] = 1 / sum(nba)#tira[dd][aa] / valsd[aa]
 
             # dommages attaquant par vaisseaux
             dama = {}
             for dma in valsa:
-                dama[dma] = []
+                dama[dma] = {}
                 for tvd in valsd:
-                    val_tir = [vidd[1] for vidd in idd if vidd[0] == tvd][0]
-                    vda = trd[tvd][dma] * val_tir
-                    mod = vda % val_tir
-                    vdmga = [vda / mod for x in range(mod)] if vda > mod and mod != 0 else [vda]
-                    dama[dma] = dama[dma] + vdmga
+                    val_tir = [vida[1] for vida in ida if vida[0] == dma][0]
+                    dama[dma][tvd] = [val_tir for x in range(round(tira[dma][tvd]))]
 
             # dommages defenseurs par vaisseaux
             damd = {}
             for dmd in valsd:
-                damd[dmd] = []
+                damd[dmd] = {}
                 for tva in valsa:
-                    val_tir = [vida[1] for vida in ida if vida[0] == tva][0]
-                    vdd = tra[tva][dmd] * val_tir
-                    mod = vdd % val_tir
-                    vdmgd = [vdd / mod for xx in range(mod)] if vdd > mod and mod != 0 else [vda]
-                    damd[dmd] = damd[dmd] + vdmgd
+                    val_tir = [vidd[1] for vidd in idd if vidd[0] == dmd][0]
+                    damd[dmd][tva] = [val_tir for x in range(round(tird[dmd][tva]))]
+
 
             # application des dommages 
             """
-            [index, attaque, bouclier, w_bouclier, structure, w_structure, fret, pseudo, dead, self.priority]
+            a = [index, attaque, bouclier, w_bouclier, structure, w_structure, fret, pseudo, dead, self.priority]
             """
-            for a in attaquants:
-                for d in dama:
-                    if d == a[0]:
-                        for t in dama[d]:
-                            if t > a[3]*0.01:
-                                a[3] -= t
-                                if a[3] < 0:
-                                    a[5] += a[3]
-                                    a[3] = 0
-                                    if a[5] <= a[4]*0.7:
-                                        prc = a[5] / a[4]
-                                        verdict = random.random()
-                                        if prc < verdict:
-                                            a[8] = 1
+            for a in attaquants: # pour chaque attaquant
+                for d in damd: # pour chaque vaisseau def
+                    if a[0] in damd[d]: # si attaquant est visé par ce vaisseau def
+                        for t in damd[d][a[0]]: # pour chaque tir
+                            if tra[a[0]][d]/valsa[a[0]] > random.random(): # chance de se faire taper
+                                if t > a[3]*0.01:
+                                    a[3] -= t
+                                    if a[3] < 0:
+                                        a[5] += a[3]
+                                        a[3] = 0
+                                        if a[5] <= a[4]*0.7:
+                                            prc = a[5] / a[4]
+                                            verdict = random.random()
+                                            if prc < verdict:
+                                                a[8] = 1
 
             for aa in defenseurs:
-                for dd in damd:
-                    if dd == aa[0]:
-                        for tt in damd[dd]:
-                            if tt > aa[3]*0.01:
-                                aa[3] -= tt
-                                if aa[3] < 0:
-                                    aa[5] += aa[3]
-                                    aa[3] = 0
-                                    if aa[5] <= aa[4]*0.7:
-                                        prc = aa[5]/aa[4]
-                                        verdict = random.random()
-                                        if prc < verdict:
-                                            aa[8] = 1
+                for dd in dama:
+                    if aa[0] in dama[dd]:
+                            for tt in dama[dd][aa[0]]:
+                                if trd[aa[0]][dd] / valsd[aa[0]] > random.random():
+                                    if tt > aa[3]*0.01:
+                                        aa[3] -= tt
+                                        if aa[3] < 0:
+                                            aa[5] += aa[3]
+                                            aa[3] = 0
+                                            if aa[5] <= aa[4]*0.7:
+                                                prc = aa[5] / aa[4]
+                                                verdict = random.random()
+                                                if prc < verdict:
+                                                    aa[8] = 1
 
             # next turn
             def snext_turn(v):
@@ -450,7 +451,7 @@ if __name__ == "__main__":
                 print("\r{0} / {1}".format(nb+1, self.param.nb_simu))
 
                 if self.param.sprob:
-                    vf = Fight_prob(gen_flotte(self.attaquants.values), gen_flotte(self.defenseurs.values), 10)
+                    vf = Fight_prob(gen_flotte(self.attaquants.values), gen_flotte(self.defenseurs.values), 1)
                 else:
                     vf = Fight(gen_flotte(self.attaquants.values), gen_flotte(self.defenseurs.values), 10)
 
