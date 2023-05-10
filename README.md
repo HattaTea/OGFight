@@ -18,6 +18,9 @@ Rendez vous ensuite dans l'interpréteur de commande afin de télécharger kivy 
  
 4- Vous n'avez plus qu'à lancer le fichier nommé main.py
  
+ 
+ Un aperçu des fonctionnalités est disponible à cette adresse : https://board.fr.ogame.gameforge.com/index.php?thread/749815-simulateur-de-combat-v9/&postID=12271279#post12271279
+ 
 
  exemple de rapport à copier/coller :
  
