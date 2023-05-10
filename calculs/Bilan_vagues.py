@@ -72,6 +72,7 @@ class Bilan_vagues(Popup):
         self.f_att.clear_widgets()
         self.f_def.clear_widgets()
         self.faff.clear_widgets()
+        
         # PERTES
         dic_att = {}
         dic_def = {}
@@ -90,35 +91,35 @@ class Bilan_vagues(Popup):
             for s in r["li_res"]:
                 for ata in s["attaquant"]["alive"]:
                     kata = eval(livaisseaux[ata[0]].replace(" ", "_"))().ress
-                    if ata[7] not in vatta:
-                        vatta[ata[7]] = sum(kata)*r["coef"]
+                    if r["names"]["attaquant"][ata[7]] not in vatta:
+                        vatta[r["names"]["attaquant"][ata[7]]] = sum(kata)*r["coef"]
                     else:
-                        vatta[ata[7]] += sum(kata)*r["coef"]
+                        vatta[r["names"]["attaquant"][ata[7]]] += sum(kata)*r["coef"]
 
                 for raa in s["attaquant"]["dead"]:
                     for ra in raa:
                         kra = eval(livaisseaux[ra[0]].replace(" ", "_"))().ress
-                        if ra[7] not in vatt:
-                            vatt[ra[7]] = {"metal" : 0, "cristal" : 0, "deut" : 0}
-                        vatt[ra[7]]["metal"] += kra[0]*r["coef"]
-                        vatt[ra[7]]["cristal"] += kra[1]*r["coef"]
-                        vatt[ra[7]]["deut"] += kra[2]*r["coef"]
+                        if r["names"]["attaquant"][ra[7]] not in vatt:
+                            vatt[r["names"]["attaquant"][ra[7]]] = {"metal" : 0, "cristal" : 0, "deut" : 0}
+                        vatt[r["names"]["attaquant"][ra[7]]]["metal"] += kra[0]*r["coef"]
+                        vatt[r["names"]["attaquant"][ra[7]]]["cristal"] += kra[1]*r["coef"]
+                        vatt[r["names"]["attaquant"][ra[7]]]["deut"] += kra[2]*r["coef"]
 
                 for dea in s["defenseur"]["alive"]:
                     kdea = eval(livaisseaux[dea[0]].replace(" ", "_"))().ress
-                    if dea[7] not in vdefa:
-                        vdefa[dea[7]] = sum(kdea)*r["coef"]
+                    if r["names"]["defenseur"][dea[7]] not in vdefa:
+                        vdefa[r["names"]["defenseur"][dea[7]]] = sum(kdea)*r["coef"]
                     else:
-                        vdefa[dea[7]] += sum(kdea)*r["coef"]
+                        vdefa[r["names"]["defenseur"][dea[7]]] += sum(kdea)*r["coef"]
 
                 for rdd in s["defenseur"]["dead"]:
                     for rd in rdd:
                         krd = eval(livaisseaux[rd[0]].replace(" ", "_"))().ress
-                        if rd[7] not in vdef:
-                            vdef[rd[7]] = {"metal" : 0, "cristal" : 0, "deut" : 0}
-                        vdef[rd[7]]["metal"] += krd[0]*r["coef"]
-                        vdef[rd[7]]["cristal"] += krd[1]*r["coef"]
-                        vdef[rd[7]]["deut"] += krd[2]*r["coef"]
+                        if r["names"]["defenseur"][rd[7]] not in vdef:
+                            vdef[r["names"]["defenseur"][rd[7]]] = {"metal" : 0, "cristal" : 0, "deut" : 0}
+                        vdef[r["names"]["defenseur"][rd[7]]]["metal"] += krd[0]*r["coef"]
+                        vdef[r["names"]["defenseur"][rd[7]]]["cristal"] += krd[1]*r["coef"]
+                        vdef[r["names"]["defenseur"][rd[7]]]["deut"] += krd[2]*r["coef"]
 
             for ats in vatta:
                 vatta[ats] = round(vatta[ats] / len(r["li_res"]))
@@ -127,10 +128,10 @@ class Bilan_vagues(Popup):
 
             for a in vatt:
                 for rc in vatt[a]:
-                    vatt[a][rc] = round(vatt[a][rc] / len(r["li_res"])) - r["conso"]["attaquant"][a]*r["coef"] if rc == "deut" else  round(vatt[a][rc] / len(r["li_res"]))
+                    vatt[a][rc] = round(vatt[a][rc] / len(r["li_res"])) - r["conso"]["attaquant"][r["names"]["attaquant"].index(a)]*r["coef"] if rc == "deut" else  round(vatt[a][rc] / len(r["li_res"]))
             for d in vdef:
                 for rcs in vdef[d]:
-                    vdef[d][rcs] = round(vdef[d][rcs] / len(r["li_res"])) - r["conso"]["defenseur"][d]*r["coef"] if rcs == "deut" else round(vdef[d][rcs] / len(r["li_res"]))
+                    vdef[d][rcs] = round(vdef[d][rcs] / len(r["li_res"])) - r["conso"]["defenseur"][r["names"]["defenseur"].index(d)]*r["coef"] if rcs == "deut" else round(vdef[d][rcs] / len(r["li_res"]))
 
             for tc in r["conso"]:
                 for c in r["conso"][tc]:
@@ -226,25 +227,44 @@ class Bilan_vagues(Popup):
         for ia in liatt:
             fnoms_att.add_widget(Label(text = str(ia), size_hint = (1, None), height = 100))
 
-            fcon.add_widget(Label(text = format(dic_conso[ia], ",d"), size_hint = (1, None), height = 100))
+            fcon.add_widget(Label(text = format(dic_conso[r["names"]["attaquant"].index(ia)], ",d"), size_hint = (1, None), height = 100))
 
             fper = GridLayout(rows = 3, size_hint = (1, None), height = 100)
+            txper = [0, 0, 0]
+            itxp = 0
             if ia in dic_att:
                 for tpr in dic_att[ia]:
                     fper.add_widget(Label(text = format(dic_att[ia][tpr], ",d")))
+                    txper[itxp] += dic_att[ia][tpr]
+                    itxp += 1
             else:
                 for tpr in range(3):
-                    fper.add_widget(Label())
+                    fper.add_widget(Label(text = "0"))
             fperj.add_widget(fper)
 
             fpilj = GridLayout(rows = 3, size_hint = (1, None), height = 100)
+            txpill = [0, 0, 0]
+            itxl = 0
             for tpi in pondpij[ia]:
                 fpilj.add_widget(Label(text = format(tpi, ",d")))
+                txpill[itxl] += tpi
+                itxl += 1
+
             fpil.add_widget(fpilj)
 
+        # benef
+        # cdr 
+        txcdr = [0, 0, 0]
+        vtxcdr = [cr["cdr"] for cr in self.values]
+        for v in vtxcdr:
+            txcdr[0] += v[0]
+            txcdr[1] += v[1]
+            txcdr[2] += v[2]
+
+        
         fbenj = GridLayout(rows = 3, size_hint = (1, None), height = 100)
         for b in range(3):
-            fbenj.add_widget(Label(text = "0"))
+            fbenj.add_widget(Label(text = format(round(int(txcdr[b] + txpill[b] - txper[b])/len(liatt)), ",d")))
         fben.add_widget(fbenj)
         
         faffa.add_widget(fnoms_att)
@@ -275,26 +295,25 @@ class Bilan_vagues(Popup):
         for ide in lidef:
             fnoms_def.add_widget(Label(text = str(ide), size_hint = (1, None), height = 100))
 
-            fcond.add_widget(Label(text = format(dic_conso[ide], ",d"), size_hint = (1, None), height = 100))
+            fcond.add_widget(Label(text = format(dic_conso[r["names"]["defenseur"].index(ide)], ",d"), size_hint = (1, None), height = 100))
             
             fperd = GridLayout(rows = 3, size_hint = (1, None), height = 100)
+            txperd = [0, 0, 0]
+            itxpd = 0
             if ide in dic_def:
                 for tpr in dic_def[ide]:
                     fperd.add_widget(Label(text = format(dic_def[ide][tpr], ",d")))
+                    txperd[itxpd] += dic_def[ide][tpr]
+                    itxpd += 1
             else:
                 for tpr in range(3):
-                    fperd.add_widget(Label())
+                    fperd.add_widget(Label(text = "0"))
             fperjd.add_widget(fperd)
 
-            """
-            fpilj = GridLayout(rows = 3, size_hint = (1, None), height = 100)
-            for tpi in pondpij[ia]:
-                fpilj.add_widget(Label(text = format(pondpij[ia][tpi], ",d")))
-            fpil.add_widget(fpilj)"""
 
         fbenjd = GridLayout(rows = 3, size_hint = (1, None), height = 100)
         for b in range(3):
-            fbenjd.add_widget(Label(text = "0"))
+            fbenjd.add_widget(Label(text = format(round(int(txcdr[b] - txperd[b])/len(lidef)), ",d")))
         fbend.add_widget(fbenjd)
         
         faffd.add_widget(fnoms_def)
@@ -304,4 +323,3 @@ class Bilan_vagues(Popup):
         faffd.add_widget(fbend)
         faffd.size_hint = (1, None)
         faffd.height = len(lidef) * 105
-
