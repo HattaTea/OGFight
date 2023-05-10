@@ -596,11 +596,11 @@ if __name__ == "__main__":
             cbilan = Resultat()
 
             # rapport de force
-            vpointd = (pointa-1)/len(bilan)
-            vpointa = (pointd-1)/len(bilan)
+            vpointa = (pointa-1)/len(bilan)
+            vpointd = (pointd-1)/len(bilan)
             if vpointa > vpointd:
                 if vpointd > 0:
-                    rap = "1 vs {}".format(round(vpointa/vpointd, 2)) 
+                    rap = "{} vs 1".format(round(vpointa/vpointd, 2)) 
                 else:
                     rap = "{} vs 0".format(vpointa)
             else:
