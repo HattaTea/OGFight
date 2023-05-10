@@ -712,12 +712,14 @@ if __name__ == "__main__":
 
             # bilan
             info_bilan = {}
-            info_bilan["cdr"] = [int(cbilan.emcdr.text.replace(",", "")), int(cbilan.eccdr.text.replace(",", ""))]
+            info_bilan["cdr"] = [int(cbilan.emcdr.text.replace(",", "")), int(cbilan.eccdr.text.replace(",", "")), int(cbilan.edcdr.text.replace(",", ""))]
             info_bilan["pillage"] = [int(prmet.replace(",", "")), int(prcri.replace(",", "")), int(prdeut.replace(",", ""))]
             info_bilan["fret"] = {"attaquant" : {}, "defenseur" : {}}
             info_bilan["conso"] = {"attaquant" : {}, "defenseur" : {}}
             info_bilan["li_res"] = bilan
             info_bilan["coef"] = coef
+            info_bilan["names"] = {"attaquant" : [x.finput.pseudo for x in self.attaquants.values],
+                                   "defenseur" : [y.finput.pseudo for y in self.defenseurs.values]}
 
             for fa in self.attaquants.values:
                 if self.attaquants.values.index(fa) not in info_bilan["fret"]["attaquant"]:
@@ -757,8 +759,8 @@ if __name__ == "__main__":
             self.trecy = GridLayout(cols = 2)
             self.frecy.add_widget(self.trecy)
 
-            self.ratt = Recyclage("ATTAQUANTS", self.attaquants.values, self.defenseurs.values[0].fcoord.value, self.param.nb_gal, self.param.nb_ss, metal, cristal, self.param.conso_uni)
-            self.rdef = Recyclage("DEFENSEURS", self.defenseurs.values, self.defenseurs.values[0].fcoord.value, self.param.nb_gal, self.param.nb_ss, metal, cristal, self.param.conso_uni)
+            self.ratt = Recyclage("ATTAQUANTS", self.attaquants.values, self.defenseurs.values[0].fcoord.value, self.param.nb_gal, self.param.nb_ss, metal, cristal, self.param.conso_uni, self.param.vitesse_uni)
+            self.rdef = Recyclage("DEFENSEURS", self.defenseurs.values, self.defenseurs.values[0].fcoord.value, self.param.nb_gal, self.param.nb_ss, metal, cristal, self.param.conso_uni, self.param.vitesse_uni)
 
             self.trecy.add_widget(self.ratt)
             self.trecy.add_widget(self.rdef)
