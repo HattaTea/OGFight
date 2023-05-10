@@ -26,7 +26,7 @@ import datetime
 ### / MOTEUR DE COMBAT V9 \ ###
 
 class Fight:
-    def __init__(self, attaquants, defenseurs, nb):
+    def __init__(self, attaquants, defenseurs, nb, fix_rf):
         self.attaquants = attaquants
         self.defenseurs = defenseurs
 
@@ -35,18 +35,19 @@ class Fight:
         self.result = manager.list()
 
         for x in range(nb):            
-            t = multiprocessing.Process(target = Fighting, args = [self.attaquants, self.defenseurs, self.result])
+            t = multiprocessing.Process(target = Fighting, args = [self.attaquants, self.defenseurs, self.result, fix_rf])
             t.start()
             self.fights.append(t)
         for f in self.fights:
             f.join()
 
   
-def Fighting(attaquants, defenseurs, cible):
+def Fighting(attaquants, defenseurs, cible, fix_rf):
 
     dic_rf = {}
     for item in livaisseaux:
         dic_rf[item] = eval(item.replace(" ", "_"))().rf
+
     
     attaquants = np.asarray(attaquants, dtype = "i4")
     defenseurs = np.asarray(defenseurs, dtype = "i4")
@@ -68,7 +69,11 @@ def Fighting(attaquants, defenseurs, cible):
             damages_a[index].append(v[1])
             #rf
             if livaisseaux[target[0]].replace(" ", "_") in dic_rf[livaisseaux[v[0]]]:
-                prc = 1 -  (1/dic_rf[livaisseaux[v[0]]][livaisseaux[target[0]].replace(" ", "_")])
+                if fix_rf:
+                    vrf = dic_rf[livaisseaux[v[0]]][livaisseaux[target[0]].replace(" ", "_")] if dic_rf[livaisseaux[v[0]]][livaisseaux[target[0]].replace(" ", "_")] <= 100 else 100
+                else:
+                    vrf = dic_rf[livaisseaux[v[0]]][livaisseaux[target[0]].replace(" ", "_")]
+                prc = 1 -  (1/vrf)
                 verdict = random.random()
                 if prc > verdict:
                     get_damagesa(v)
@@ -81,7 +86,11 @@ def Fighting(attaquants, defenseurs, cible):
             damages_d[index].append(v[1])
             #rf
             if livaisseaux[target[0]].replace(" ", "_") in dic_rf[livaisseaux[v[0]]]:
-                prc = 1 -  (1/dic_rf[livaisseaux[v[0]]][livaisseaux[target[0]].replace(" ", "_")])
+                if fix_rf:
+                    vrf = dic_rf[livaisseaux[v[0]]][livaisseaux[target[0]].replace(" ", "_")] if dic_rf[livaisseaux[v[0]]][livaisseaux[target[0]].replace(" ", "_")] <= 100 else 100
+                else:
+                    vrf = dic_rf[livaisseaux[v[0]]][livaisseaux[target[0]].replace(" ", "_")]
+                prc = 1 -  (1/vrf)
                 verdict = random.random()
                 if prc > verdict:
                     #time.sleep(0.00001)
@@ -336,8 +345,6 @@ if __name__ == "__main__":
     from rubriques.saisies.Recyclage import Recyclage
     from calculs import Bilan_vagues, Resultat
 
-
-
     # autre
     from math import sqrt
 
@@ -453,7 +460,7 @@ if __name__ == "__main__":
                 if self.param.sprob:
                     vf = Fight_prob(gen_flotte(self.attaquants.values), gen_flotte(self.defenseurs.values), 1)
                 else:
-                    vf = Fight(gen_flotte(self.attaquants.values), gen_flotte(self.defenseurs.values), 10)
+                    vf = Fight(gen_flotte(self.attaquants.values), gen_flotte(self.defenseurs.values), 10, self.param.fix_rf)
 
                 ls.append(vf)
                 nb += 10
