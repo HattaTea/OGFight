@@ -59,13 +59,10 @@ class Param_simu(FGridLayout):
         self.sparam = ScrollView()
         self.add_widget(self.sparam)
 
-        self.sfparam = GridLayout(cols = 1, size_hint = (1, None), height = 450)
-        self.sparam.add_widget(self.sfparam)
+        self.fsaisi = GridLayout(cols = 1, spacing = [10, 10], size_hint = (1, None), height = 450)
+        self.sparam.add_widget(self.fsaisi)
 
-        self.fsaisi = GridLayout(cols = 1, spacing = [10, 10], size_hint = (1, None), height = 120)
-        self.sfparam.add_widget(self.fsaisi)
-
-        self.fsimu = GridLayout(rows = 4)
+        self.fsimu = GridLayout(cols = 1, size_hint = (1, None), height = 170)
         self.lsimu = Label(text = "SIMULATION", size_hint = (1, None), height = 40)
         self.fsimu.add_widget(self.lsimu)
 
@@ -105,6 +102,23 @@ class Param_simu(FGridLayout):
         self.fff.add_widget(self.eff)
         self.fsimu.add_widget(self.fff)
 
+        
+        self.fcoef = GridLayout(cols = 2, size_hint = (1, None), height = 30)
+        self.lcoef = Label(text = "Appliquer un coef :")
+        self.ecoef = CheckBox(active = True, size_hint = (None, 1), width = 40)
+        self.ecoef.bind(active = self.setter("coef"))
+        self.fcoef.add_widget(self.lcoef)
+        self.fcoef.add_widget(self.ecoef)
+        self.fsimu.add_widget(self.fcoef)
+
+        self.fsprob = GridLayout(cols = 2, size_hint = (1, None), height = 30)
+        self.lsprob = Label(text = "Calcul probabilistique :")
+        self.esprob = CheckBox(active = False, size_hint = (None, 1), width = 40)
+        self.esprob.bind(active = self.setter("sprob"))
+        self.fsprob.add_widget(self.lsprob)
+        self.fsprob.add_widget(self.esprob)
+        self.fsimu.add_widget(self.fsprob)
+        
         self.fsaisi.add_widget(self.fsimu)
 
 
@@ -169,23 +183,7 @@ class Param_simu(FGridLayout):
         self.fdcdr.add_widget(self.ldcdr)
         self.fdcdr.add_widget(self.edcdr)
         self.fvuni.add_widget(self.fdcdr)
-        
-        self.fcoef = GridLayout(cols = 2, size_hint = (1, None), height = 30)
-        self.lcoef = Label(text = "Appliquer un coef :")
-        self.ecoef = CheckBox(active = True, size_hint = (None, 1), width = 40)
-        self.ecoef.bind(active = self.setter("coef"))
-        self.fcoef.add_widget(self.lcoef)
-        self.fcoef.add_widget(self.ecoef)
-        self.fvuni.add_widget(self.fcoef)
 
-        self.fsprob = GridLayout(cols = 2, size_hint = (1, None), height = 30)
-        self.lsprob = Label(text = "Calcul probabilistique :")
-        self.esprob = CheckBox(active = False, size_hint = (None, 1), width = 40)
-        self.esprob.bind(active = self.setter("sprob"))
-        self.fsprob.add_widget(self.lsprob)
-        self.fsprob.add_widget(self.esprob)
-        self.fvuni.add_widget(self.fsprob)
-        
         
         """
         self.fswitch = GridLayout(cols = 2, size_hint = (1, None), height = 30)
@@ -197,7 +195,7 @@ class Param_simu(FGridLayout):
         self.fvuni.add_widget(self.fswitch)
         """
         self.funi.add_widget(self.fvuni)
-        self.sfparam.add_widget(self.funi)
+        self.fsaisi.add_widget(self.funi)
 
         ## pillage ##
         self.fpillage = GridLayout(cols = 1)
