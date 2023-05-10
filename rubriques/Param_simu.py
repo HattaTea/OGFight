@@ -35,6 +35,9 @@ class Param_simu(FGridLayout):
     nb_simu = StringProperty("50")
     prc_pillage = StringProperty("50")
     limite_ff = StringProperty("25")
+    coef = BooleanProperty(True)
+    sprob = BooleanProperty(False)
+    fix_rf = BooleanProperty(False)
 
     vitesse_uni = StringProperty("1")
     conso_uni = StringProperty("100")
@@ -43,8 +46,7 @@ class Param_simu(FGridLayout):
     nb_gal = StringProperty("5")
     nb_ss = StringProperty("499")
     deut_cdr = BooleanProperty(False)
-    coef = BooleanProperty(True)
-    sprob = BooleanProperty(False)
+
 
     def __init__(self, **kwargs):
         super(Param_simu, self).__init__(**kwargs)
@@ -59,10 +61,10 @@ class Param_simu(FGridLayout):
         self.sparam = ScrollView()
         self.add_widget(self.sparam)
 
-        self.fsaisi = GridLayout(cols = 1, spacing = [10, 10], size_hint = (1, None), height = 450)
+        self.fsaisi = GridLayout(cols = 1, spacing = [10, 10], size_hint = (1, None), height = 500)
         self.sparam.add_widget(self.fsaisi)
 
-        self.fsimu = GridLayout(cols = 1, size_hint = (1, None), height = 170)
+        self.fsimu = GridLayout(cols = 1, size_hint = (1, None), height = 200)
         self.lsimu = Label(text = "SIMULATION", size_hint = (1, None), height = 40)
         self.fsimu.add_widget(self.lsimu)
 
@@ -118,6 +120,14 @@ class Param_simu(FGridLayout):
         self.fsprob.add_widget(self.lsprob)
         self.fsprob.add_widget(self.esprob)
         self.fsimu.add_widget(self.fsprob)
+
+        self.ffrf = GridLayout(cols = 2, size_hint = (1, None), height = 30)
+        self.lfrf = Label(text = "V 10 : ")
+        self.efrf = CheckBox(active = False, size_hint = (None, 1), width = 40)
+        self.efrf.bind(active = self.setter("fix_rf"))
+        self.ffrf.add_widget(self.lfrf)
+        self.ffrf.add_widget(self.efrf)
+        self.fsimu.add_widget(self.ffrf)
         
         self.fsaisi.add_widget(self.fsimu)
 
