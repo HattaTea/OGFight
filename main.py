@@ -70,7 +70,7 @@ def Fighting(attaquants, defenseurs, cible, fix_rf):
             #rf
             if livaisseaux[target[0]].replace(" ", "_") in dic_rf[livaisseaux[v[0]]]:
                 if fix_rf:
-                    vrf = dic_rf[livaisseaux[v[0]]][livaisseaux[target[0]].replace(" ", "_")] if dic_rf[livaisseaux[v[0]]][livaisseaux[target[0]].replace(" ", "_")] <= 100 else 100
+                    vrf = dic_rf[livaisseaux[v[0]]][livaisseaux[target[0]].replace(" ", "_")] if dic_rf[livaisseaux[v[0]]][livaisseaux[target[0]].replace(" ", "_")] <= 250 else 250
                 else:
                     vrf = dic_rf[livaisseaux[v[0]]][livaisseaux[target[0]].replace(" ", "_")]
                 prc = 1 -  (1/vrf)
@@ -87,7 +87,7 @@ def Fighting(attaquants, defenseurs, cible, fix_rf):
             #rf
             if livaisseaux[target[0]].replace(" ", "_") in dic_rf[livaisseaux[v[0]]]:
                 if fix_rf:
-                    vrf = dic_rf[livaisseaux[v[0]]][livaisseaux[target[0]].replace(" ", "_")] if dic_rf[livaisseaux[v[0]]][livaisseaux[target[0]].replace(" ", "_")] <= 100 else 100
+                    vrf = dic_rf[livaisseaux[v[0]]][livaisseaux[target[0]].replace(" ", "_")] if dic_rf[livaisseaux[v[0]]][livaisseaux[target[0]].replace(" ", "_")] <= 250 else 250
                 else:
                     vrf = dic_rf[livaisseaux[v[0]]][livaisseaux[target[0]].replace(" ", "_")]
                 prc = 1 -  (1/vrf)
