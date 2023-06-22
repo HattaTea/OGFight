@@ -59,4 +59,5 @@ class Datas_manager:
         cur = con.cursor()
         cur.execute("SELECT * FROM rapports")
         res = cur.fetchall()
+        con.close()
         return res
